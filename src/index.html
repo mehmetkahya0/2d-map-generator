@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>2D Harita Oluşturucu</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        max-width: 1000px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #1a73e8;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 15px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+      }
+
+      select,
+      button,
+      input {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      select {
+        background-color: white;
+        min-width: 150px;
+      }
+
+      button {
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #1557b0;
+      }
+
+      #mapCanvas {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin: 20px auto;
+        display: block;
+      }
+
+      .map-info {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .settings-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      label {
+        font-size: 14px;
+        color: #666;
+      }
+
+      .color-scale {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 200px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+        padding: 10px;
+        display: none; /* Varsayılan olarak gizli */
+      }
+
+      .scale-bar {
+        width: 20px;
+        height: 180px;
+        margin: 10px;
+        position: relative;
+      }
+
+      .scale-labels {
+        position: absolute;
+        left: 35px;
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-size: 12px;
+      }
+
+      .scale-title {
+        position: absolute;
+        top: -25px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+      }
+
+      .feature-checkboxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        background: white;
+        border-radius: 3px;
+        border: 1px solid #e0e0e0;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .feature-item:hover {
+        background: #e9ecef;
+      }
+
+      .feature-item input[type="checkbox"] {
+        cursor: pointer;
+      }
+
+      .feature-item label {
+        cursor: pointer;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>2D Harita Oluşturucu</h1>
+      <div class="controls">
+        <div class="settings-group">
+          <label for="theme">Harita Teması:</label>
+          <select id="theme">
+            <option value="medieval">Orta Çağ</option>
+            <option value="fantasy">Fantezi</option>
+            <option value="farm">Çiftlik</option>
+            <option value="winter">Kış Diyarı</option>
+            <option value="volcanic">Volkanik</option>
+            <option value="desert">Çöl</option>
+            <option value="swamp">Bataklık</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label for="mapSize">Harita Boyutu:</label>
+          <select id="mapSize">
+            <option value="small">Küçük (30x20)</option>
+            <option value="medium" selected>Orta (50x37)</option>
+            <option value="large">Büyük (80x60)</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label for="tileSize">Kare Boyutu:</label>
+          <select id="tileSize">
+            <option value="12">Küçük</option>
+            <option value="16" selected>Orta</option>
+            <option value="24">Büyük</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label for="riverCount">Nehir Sayısı:</label>
+          <input type="number" id="riverCount" min="0" max="10" value="3" />
+        </div>
+
+        <div class="settings-group">
+          <label for="volcanoChance">Volkan Olasılığı:</label>
+          <select id="volcanoChance">
+            <option value="0">Yok</option>
+            <option value="0.3" selected>Normal</option>
+            <option value="0.6">Yüksek</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label for="viewMode">Görünüm Modu:</label>
+          <select id="viewMode">
+            <option value="normal">Normal</option>
+            <option value="height">Yükseklik Haritası</option>
+            <option value="temperature">Sıcaklık Haritası</option>
+            <option value="moisture">Nem Haritası</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label for="structures">Yapı Yoğunluğu:</label>
+          <select id="structures">
+            <option value="low">Az</option>
+            <option value="medium" selected>Orta</option>
+            <option value="high">Çok</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label>Özel Özellikler:</label>
+          <div class="feature-checkboxes">
+            <div class="feature-item">
+              <input type="checkbox" id="bridges" name="features" value="bridges">
+              <label for="bridges">Köprüler</label>
+            </div>
+            <div class="feature-item">
+              <input type="checkbox" id="ruins" name="features" value="ruins">
+              <label for="ruins">Harabeler</label>
+            </div>
+            <div class="feature-item">
+              <input type="checkbox" id="caves" name="features" value="caves">
+              <label for="caves">Mağaralar</label>
+            </div>
+            <div class="feature-item">
+              <input type="checkbox" id="temples" name="features" value="temples">
+              <label for="temples">Tapınaklar</label>
+            </div>
+            <div class="feature-item">
+              <input type="checkbox" id="towers" name="features" value="towers">
+              <label for="towers">Kuleler</label>
+            </div>
+            <div class="feature-item">
+              <input type="checkbox" id="villages" name="features" value="villages">
+              <label for="villages">Köyler</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <label for="legendToggle">Harita Lejandı:</label>
+          <input type="checkbox" id="legendToggle" checked>
+        </div>
+
+        <button onclick="generateNewMap()">Yeni Harita Oluştur</button>
+        <button onclick="downloadMap()">Haritayı İndir</button>
+      </div>
+
+      <canvas id="mapCanvas" width="800" height="600"></canvas>
+
+      <div class="map-details">
+        <h3>Harita Detayları</h3>
+        <div id="biomeStats"></div>
+        <div id="featureStats"></div>
+      </div>
+
+      <div class="map-info">
+        <div id="hoverInfo">Kare Bilgisi: -</div>
+        <br>
+        <div id="mapStats">İstatistikler yükleniyor...</div>
+      </div>
+
+      <div class="color-scale">
+        <div class="scale-title"></div>
+        <div class="scale-bar"></div>
+        <div class="scale-labels">
+          <span>Yüksek</span>
+          <span>Orta</span>
+          <span>Düşük</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="MapGenerator.js"></script>
+    <script src="MapRenderer.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

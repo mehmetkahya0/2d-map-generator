@@ -608,6 +608,71 @@ class MapGenerator {
         });
     }
 
+    generateJungleMap() {
+        const map = this.generateTerrain(Math.random() * 1000, 30, {
+            water: 0.2,
+            jungle: 0.6,
+            forest: 0.8,
+            mountain: 1.0
+        });
+        
+        // Add jungle temples
+        const templeCount = Math.floor(Math.random() * 3) + 2;
+        for(let i = 0; i < templeCount; i++) {
+            const x = Math.floor(Math.random() * (this.width - 4)) + 2;
+            const y = Math.floor(Math.random() * (this.height - 4)) + 2;
+            this.createJungleTemple(x, y);
+        }
+        
+        // Add waterfalls
+        const waterfallCount = Math.floor(Math.random() * 2) + 1;
+        for(let i = 0; i < waterfallCount; i++) {
+            const x = Math.floor(Math.random() * (this.width - 4)) + 2;
+            const y = Math.floor(Math.random() * (this.height - 4)) + 2;
+            this.createWaterfall(x, y);
+        }
+        
+        return map;
+    }
+
+    createJungleTemple(x, y) {
+        // Create a 3x3 temple area
+        for(let dy = -1; dy <= 1; dy++) {
+            for(let dx = -1; dx <= 1; dx++) {
+                const worldX = x + dx;
+                const worldY = y + dy;
+                if(worldX >= 0 && worldX < this.width && worldY >= 0 && worldY < this.height) {
+                    this.tiles[worldY][worldX] = this.tileTypes.TEMPLE;
+                }
+            }
+        }
+        // Add surrounding jungle vegetation
+        for(let dy = -2; dy <= 2; dy++) {
+            for(let dx = -2; dx <= 2; dx++) {
+                if(Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+                    const worldX = x + dx;
+                    const worldY = y + dy;
+                    if(worldX >= 0 && worldX < this.width && worldY >= 0 && worldY < this.height) {
+                        this.tiles[worldY][worldX] = this.tileTypes.JUNGLE;
+                    }
+                }
+            }
+        }
+    }
+
+    createWaterfall(x, y) {
+        // Create a vertical water feature
+        for(let dy = -2; dy <= 2; dy++) {
+            const worldY = y + dy;
+            if(worldY >= 0 && worldY < this.height) {
+                this.tiles[worldY][x] = this.tileTypes.WATER;
+                // Add rocks on the sides
+                if(x-1 >= 0) this.tiles[worldY][x-1] = this.tileTypes.MOUNTAIN;
+                if(x+1 < this.width) this.tiles[worldY][x+1] = this.tileTypes.MOUNTAIN;
+            }
+        }
+    }
+
     generateMap(theme) {
         switch(theme) {
             case 'medieval':
@@ -624,6 +689,8 @@ class MapGenerator {
                 return this.generateDesertMap();
             case 'swamp':
                 return this.generateSwampMap();
+            case 'jungle':
+                return this.generateJungleMap();
             default:
                 return this.generateMedievalMap();
         }

@@ -164,6 +164,286 @@
         cursor: pointer;
         user-select: none;
       }
+
+      /* Dark mode styles */
+      body.dark-mode {
+        background-color: #181818;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .container {
+        background-color: #242424;
+      }
+
+      body.dark-mode .map-info,
+      body.dark-mode .map-details {
+        background-color: #333;
+        color: #f0f2f5;
+        border: 1px solid #444;
+      }
+
+      body.dark-mode button {
+        background-color: #333;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode button:hover {
+        background-color: #555;
+      }
+
+      body.dark-mode .weather-controls,
+      body.dark-mode .time-cycle,
+      body.dark-mode .feature-checkboxes {
+        background-color: #333;
+        border-color: #444;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .feature-item {
+        background-color: #444;
+        border-color: #555;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .feature-item:hover {
+        background-color: #555;
+      }
+
+      body.dark-mode select,
+      body.dark-mode input[type="number"] {
+        background-color: #333;
+        border-color: #444;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode select option {
+        background-color: #333;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .weather-btn {
+        background-color: #444;
+        border-color: #555;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .weather-btn:hover {
+        background-color: #555;
+      }
+
+      body.dark-mode .weather-btn.active {
+        background-color: #1a73e8;
+        color: #ffffff;
+      }
+
+      body.dark-mode label {
+        color: #f0f2f5;
+      }
+
+      body.dark-mode h3 {
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .tooltiptext {
+        background-color: #444;
+        color: #f0f2f5;
+      }
+
+      /* Button focus styles */
+      button:focus {
+        outline: 2px solid #1a73e8;
+      }
+
+      /* Tooltip styles */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%; /* Position the tooltip above the text */
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .mini-map {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        border: 2px solid #1a73e8;
+        border-radius: 5px;
+        background: white;
+        padding: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .mini-map canvas {
+        width: 200px;
+        height: 150px;
+      }
+
+      .weather-controls {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        background: #ffffff;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        margin: 10px 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .weather-btn {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: #f8f9fa;
+        color: #333;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .weather-btn.active {
+        background: #1a73e8;
+        color: white;
+        border-color: #1557b0;
+      }
+
+      .weather-btn:hover {
+        background: #e9ecef;
+        border-color: #ced4da;
+      }
+
+      .time-cycle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: #ffffff;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .time-cycle label {
+        color: #333;
+        font-weight: 500;
+      }
+
+      .weather-controls label {
+        color: #333;
+        font-weight: 500;
+        min-width: 100px;
+      }
+
+      body.dark-mode .mini-map {
+        background-color: #242424;
+        border-color: #555;
+      }
+
+      body.dark-mode .weather-controls,
+      body.dark-mode .time-cycle {
+        background-color: #333;
+        border-color: #555;
+      }
+
+      body.dark-mode .weather-btn {
+        background-color: #444;
+        border-color: #555;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .weather-btn:hover {
+        background-color: #555;
+      }
+
+      body.dark-mode .weather-btn.active {
+        background-color: #1a73e8;
+      }
+
+      .view-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px;
+        background: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+
+      .canvas-container {
+        position: relative;
+        width: 100%;
+        height: 600px;
+      }
+
+      #mapCanvas, #threeDCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      #threeDCanvas {
+        display: none;
+      }
+
+      body.dark-mode .view-toggle {
+        background: #333;
+        color: #f0f2f5;
+      }
+
+      .map-btn {
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+      }
+
+      .map-btn:hover {
+        background-color: #1557b0;
+      }
+
+      body.dark-mode .map-btn {
+        background-color: #333;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .map-btn:hover {
+        background-color: #555;
+      }
+
+      #mapCanvas, #threeDCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+      }
+
+      #mapCanvas.active, #threeDCanvas.active {
+        display: block;
+      }
     </style>
   </head>
   <body>
@@ -171,6 +451,11 @@
       <h1>2D Harita Oluşturucu</h1>
       <div class="controls">
         <div class="settings-group">
+          <label for="darkModeToggle">Karanlık Mod:</label>
+          <input type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()">
+        </div>
+
+        <div class="settings-group tooltip">
           <label for="theme">Harita Teması:</label>
           <select id="theme">
             <option value="medieval">Orta Çağ</option>
@@ -180,7 +465,9 @@
             <option value="volcanic">Volkanik</option>
             <option value="desert">Çöl</option>
             <option value="swamp">Bataklık</option>
+            <option value="jungle">Orman</option>
           </select>
+          <span class="tooltiptext">Harita temasını seçin</span>
         </div>
 
         <div class="settings-group">
@@ -269,11 +556,32 @@
           <input type="checkbox" id="legendToggle" checked>
         </div>
 
-        <button onclick="generateNewMap()">Yeni Harita Oluştur</button>
-        <button onclick="downloadMap()">Haritayı İndir</button>
+        <div class="weather-controls">
+          <label>Hava Durumu:</label>
+          <button class="weather-btn active" data-weather="none">Normal</button>
+          <button class="weather-btn" data-weather="rain">Yağmurlu</button>
+          <button class="weather-btn" data-weather="snow">Karlı</button>
+          <button class="weather-btn" data-weather="cloudy">Bulutlu</button>
+        </div>
+
+        <div class="time-cycle">
+          <label>Zaman:</label>
+          <button id="dayNightToggle" onclick="toggleDayNight()">
+            <span class="time-icon">☀️</span>
+          </button>
+        </div>
+
+        <div class="settings-group">
+          <button onclick="generate2DMap()" class="map-btn">2D Harita Oluştur</button>
+          <button onclick="generate3DMap()" class="map-btn">3D Harita Oluştur</button>
+          <button onclick="downloadMap()" class="map-btn">Haritayı İndir</button>
+        </div>
       </div>
 
-      <canvas id="mapCanvas" width="800" height="600"></canvas>
+      <div class="canvas-container">
+        <canvas id="mapCanvas" width="800" height="600"></canvas>
+        <canvas id="threeDCanvas" width="800" height="600"></canvas>
+      </div>
 
       <div class="map-details">
         <h3>Harita Detayları</h3>
@@ -298,8 +606,49 @@
       </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="MapGenerator.js"></script>
     <script src="MapRenderer.js"></script>
+    <script src="ThreeDRenderer.js"></script>
     <script src="app.js"></script>
+    <script>
+      // Toggle dark mode
+      function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+      }
+
+      // Weather control
+      document.querySelectorAll('.weather-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.weather-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const weather = btn.dataset.weather;
+          if (mapRenderer) {
+            mapRenderer.setWeatherEffect(weather);
+          }
+        });
+      });
+
+      // Day/Night toggle
+      let isDayTime = true;
+      function toggleDayNight() {
+        isDayTime = !isDayTime;
+        const btn = document.getElementById('dayNightToggle');
+        btn.querySelector('.time-icon').textContent = isDayTime ? '☀️' : '🌙';
+        if (mapRenderer) {
+          mapRenderer.setDayNightCycle(isDayTime);
+        }
+      }
+
+      let is3DView = false;
+      function toggleView() {
+        is3DView = !is3DView;
+        document.getElementById('mapCanvas').style.display = is3DView ? 'none' : 'block';
+        document.getElementById('threeDCanvas').style.display = is3DView ? 'block' : 'none';
+        if (is3DView && threeDRenderer) {
+          threeDRenderer.render(currentMap);
+        }
+      }
+    </script>
   </body>
 </html>

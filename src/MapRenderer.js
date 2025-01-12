@@ -4,8 +4,11 @@ class MapRenderer {
         this.ctx = canvas.getContext('2d');
         this.tileSize = 16;
         this.viewMode = 'normal';
+        this.weatherEffect = 'none';
+        this.isDayTime = true;
         this.setupEventListeners();
         this.setupColorScale();
+        this.setupWeatherEffects();
     }
 
     setupEventListeners() {
@@ -93,6 +96,12 @@ class MapRenderer {
                 break;
             default:
                 this.renderNormalMap(map);
+        }
+
+        // Apply day/night overlay
+        if (!this.isDayTime) {
+            this.ctx.fillStyle = 'rgba(0, 0, 40, 0.4)';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         }
     }
 
@@ -731,5 +740,175 @@ class MapRenderer {
         this.ctx.lineTo((x + 1) * this.tileSize, (y + 1) * this.tileSize);
         this.ctx.lineTo((x + 0.5) * this.tileSize, (y + 1) * this.tileSize);
         this.ctx.fill();
+    }
+
+    setupWeatherEffects() {
+        this.raindrops = [];
+        this.snowflakes = [];
+        this.cloudParticles = [];
+        this.weatherAnimationFrame = null;
+    }
+
+    setWeatherEffect(effect) {
+        this.weatherEffect = effect;
+        this.clearWeatherParticles();
+        if (effect !== 'none') {
+            this.startWeatherAnimation();
+        } else {
+            this.stopWeatherAnimation();
+        }
+    }
+
+    setDayNightCycle(isDayTime) {
+        this.isDayTime = isDayTime;
+        this.render(currentMap);
+    }
+
+    clearWeatherParticles() {
+        this.raindrops = [];
+        this.snowflakes = [];
+        this.cloudParticles = [];
+    }
+
+    startWeatherAnimation() {
+        if (this.weatherAnimationFrame) return;
+        
+        const animate = () => {
+            this.updateWeatherParticles();
+            this.render(currentMap);
+            this.renderWeatherEffects();
+            this.weatherAnimationFrame = requestAnimationFrame(animate);
+        };
+        
+        animate();
+    }
+
+    stopWeatherAnimation() {
+        if (this.weatherAnimationFrame) {
+            cancelAnimationFrame(this.weatherAnimationFrame);
+            this.weatherAnimationFrame = null;
+        }
+    }
+
+    updateWeatherParticles() {
+        switch(this.weatherEffect) {
+            case 'rain':
+                this.updateRain();
+                break;
+            case 'snow':
+                this.updateSnow();
+                break;
+            case 'cloudy':
+                this.updateClouds();
+                break;
+        }
+    }
+
+    updateRain() {
+        // Add new raindrops
+        while (this.raindrops.length < 100) {
+            this.raindrops.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                speed: 10 + Math.random() * 5,
+                length: 10 + Math.random() * 5
+            });
+        }
+
+        // Update existing raindrops
+        this.raindrops = this.raindrops.filter(drop => {
+            drop.y += drop.speed;
+            return drop.y < this.canvas.height;
+        });
+    }
+
+    updateSnow() {
+        // Add new snowflakes
+        while (this.snowflakes.length < 50) {
+            this.snowflakes.push({
+                x: Math.random() * this.canvas.width,
+                y: -5,
+                size: 2 + Math.random() * 3,
+                speed: 1 + Math.random() * 2,
+                drift: Math.sin(Math.random() * Math.PI * 2)
+            });
+        }
+
+        // Update existing snowflakes
+        this.snowflakes = this.snowflakes.filter(flake => {
+            flake.y += flake.speed;
+            flake.x += flake.drift * 0.5;
+            return flake.y < this.canvas.height && flake.x > 0 && flake.x < this.canvas.width;
+        });
+    }
+
+    updateClouds() {
+        // Add new cloud particles
+        while (this.cloudParticles.length < 20) {
+            this.cloudParticles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * (this.canvas.height * 0.3),
+                size: 30 + Math.random() * 20,
+                speed: 0.5 + Math.random() * 0.5
+            });
+        }
+
+        // Update existing cloud particles
+        this.cloudParticles = this.cloudParticles.filter(cloud => {
+            cloud.x += cloud.speed;
+            return cloud.x < this.canvas.width + cloud.size;
+        });
+    }
+
+    renderWeatherEffects() {
+        switch(this.weatherEffect) {
+            case 'rain':
+                this.renderRain();
+                break;
+            case 'snow':
+                this.renderSnow();
+                break;
+            case 'cloudy':
+                this.renderClouds();
+                break;
+        }
+    }
+
+    renderRain() {
+        this.ctx.strokeStyle = 'rgba(174, 194, 224, 0.5)';
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
+        this.raindrops.forEach(drop => {
+            this.ctx.moveTo(drop.x, drop.y);
+            this.ctx.lineTo(drop.x - 1, drop.y + drop.length);
+        });
+        this.ctx.stroke();
+    }
+
+    renderSnow() {
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        this.snowflakes.forEach(flake => {
+            this.ctx.beginPath();
+            this.ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
+            this.ctx.fill();
+        });
+    }
+
+    renderClouds() {
+        this.cloudParticles.forEach(cloud => {
+            const gradient = this.ctx.createRadialGradient(
+                cloud.x, cloud.y, 0,
+                cloud.x, cloud.y, cloud.size
+            );
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            this.ctx.fillStyle = gradient;
+            this.ctx.fillRect(
+                cloud.x - cloud.size,
+                cloud.y - cloud.size/2,
+                cloud.size * 2,
+                cloud.size
+            );
+        });
     }
 } 

@@ -2,10 +2,11 @@
 <html>
   <head>
     <title>Map Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
       body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f0f2f5;
+        font-family: "Quicksand", sans-serif;
+        background-color: #E3F2FD;
         margin: 0;
         padding: 20px;
         display: flex;
@@ -14,18 +15,22 @@
       }
 
       .container {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #FFFFFF;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.15);
         max-width: 1000px;
         width: 100%;
+        border: 3px solid #90CAF9;
       }
 
       h1 {
-        color: #1a73e8;
+        color: #1976D2;
         text-align: center;
         margin-bottom: 20px;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 0px #BBDEFB;
+        font-weight: 700;
       }
 
       .controls {
@@ -40,42 +45,49 @@
       select,
       button,
       input {
-        padding: 8px 16px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 14px;
+        padding: 10px 20px;
+        border: 2px solid #90CAF9;
+        border-radius: 15px;
+        font-size: 16px;
+        font-family: "Quicksand", sans-serif;
       }
 
       select {
         background-color: white;
         min-width: 150px;
+        cursor: pointer;
       }
 
       button {
-        background-color: #1a73e8;
+        background-color: #2196F3;
         color: white;
         border: none;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: all 0.3s;
+        box-shadow: 0 2px 5px rgba(33, 150, 243, 0.2);
+        font-weight: 600;
       }
 
       button:hover {
-        background-color: #1557b0;
+        background-color: #1976D2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
       }
 
       #mapCanvas {
-        border: 1px solid #ddd;
-        border-radius: 5px;
+        border: 3px solid #90CAF9;
+        border-radius: 15px;
         margin: 20px auto;
         display: block;
       }
 
       .map-info {
-        background-color: rgba(255, 255, 255, 0.9);
-        padding: 10px;
-        border-radius: 5px;
-        margin-top: 10px;
-        font-size: 14px;
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 15px;
+        border-radius: 15px;
+        margin-top: 15px;
+        font-size: 16px;
+        border: 2px solid #90CAF9;
       }
 
       .settings-group {
@@ -134,26 +146,27 @@
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-        padding: 10px;
-        background: #f8f9fa;
-        border-radius: 5px;
-        border: 1px solid #ddd;
+        padding: 15px;
+        background: #E3F2FD;
+        border-radius: 15px;
+        border: 2px solid #90CAF9;
       }
 
       .feature-item {
         display: flex;
         align-items: center;
-        gap: 5px;
-        padding: 5px 10px;
+        gap: 8px;
+        padding: 8px 15px;
         background: white;
-        border-radius: 3px;
-        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        border: 2px solid #90CAF9;
         cursor: pointer;
         transition: all 0.2s;
       }
 
       .feature-item:hover {
-        background: #e9ecef;
+        background: #BBDEFB;
+        transform: translateY(-2px);
       }
 
       .feature-item input[type="checkbox"] {
@@ -167,86 +180,120 @@
 
       /* Dark mode styles */
       body.dark-mode {
-        background-color: #181818;
-        color: #f0f2f5;
+        background-color: #1a1a2e;
+        color: #e9ecef;
       }
 
       body.dark-mode .container {
-        background-color: #242424;
+        background-color: #16213e;
+        border-color: #0f3460;
       }
 
       body.dark-mode .map-info,
       body.dark-mode .map-details {
-        background-color: #333;
-        color: #f0f2f5;
-        border: 1px solid #444;
+        background-color: #1a1a2e;
+        color: #e9ecef;
+        border-color: #0f3460;
       }
 
       body.dark-mode button {
-        background-color: #333;
-        color: #f0f2f5;
+        background-color: #0f3460;
+        color: #e9ecef;
       }
 
       body.dark-mode button:hover {
-        background-color: #555;
+        background-color: #533483;
       }
 
       body.dark-mode .weather-controls,
       body.dark-mode .time-cycle,
-      body.dark-mode .feature-checkboxes {
-        background-color: #333;
-        border-color: #444;
-        color: #f0f2f5;
+      body.dark-mode .feature-checkboxes,
+      body.dark-mode .view-controls {
+        background-color: #16213e;
+        border-color: #0f3460;
       }
 
       body.dark-mode .feature-item {
-        background-color: #444;
-        border-color: #555;
-        color: #f0f2f5;
+        background-color: #1a1a2e;
+        border-color: #0f3460;
+        color: #e9ecef;
       }
 
       body.dark-mode .feature-item:hover {
-        background-color: #555;
+        background-color: #533483;
       }
 
       body.dark-mode select,
       body.dark-mode input[type="number"] {
-        background-color: #333;
-        border-color: #444;
-        color: #f0f2f5;
+        background-color: #1a1a2e;
+        border-color: #0f3460;
+        color: #e9ecef;
       }
 
       body.dark-mode select option {
-        background-color: #333;
-        color: #f0f2f5;
+        background-color: #1a1a2e;
+        color: #e9ecef;
       }
 
       body.dark-mode .weather-btn {
-        background-color: #444;
-        border-color: #555;
-        color: #f0f2f5;
+        background-color: #1a1a2e;
+        border-color: #0f3460;
+        color: #e9ecef;
       }
 
       body.dark-mode .weather-btn:hover {
-        background-color: #555;
+        background-color: #533483;
       }
 
       body.dark-mode .weather-btn.active {
-        background-color: #1a73e8;
-        color: #ffffff;
+        background-color: #0f3460;
+        color: #e9ecef;
       }
 
       body.dark-mode label {
-        color: #f0f2f5;
+        color: #e9ecef;
+      }
+
+      body.dark-mode h1 {
+        color: #e9ecef;
+        text-shadow: 2px 2px 0px #0f3460;
       }
 
       body.dark-mode h3 {
-        color: #f0f2f5;
+        color: #e9ecef;
       }
 
       body.dark-mode .tooltiptext {
-        background-color: #444;
-        color: #f0f2f5;
+        background-color: #0f3460;
+        color: #e9ecef;
+      }
+
+      body.dark-mode .map-btn {
+        background-color: #0f3460;
+        color: #e9ecef;
+      }
+
+      body.dark-mode .map-btn:hover {
+        background-color: #533483;
+      }
+
+      body.dark-mode .view-btn {
+        background-color: #1a1a2e;
+        border-color: #0f3460;
+        color: #e9ecef;
+      }
+
+      body.dark-mode .view-btn:hover {
+        background-color: #533483;
+      }
+
+      body.dark-mode .view-btn.active {
+        background-color: #0f3460;
+      }
+
+      body.dark-mode .mini-map {
+        background-color: #1a1a2e;
+        border-color: #0f3460;
       }
 
       /* Button focus styles */
@@ -300,46 +347,46 @@
 
       .weather-controls {
         display: flex;
-        gap: 10px;
-        padding: 10px;
-        background: #ffffff;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        margin: 10px 0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        gap: 12px;
+        padding: 15px;
+        background: #E3F2FD;
+        border-radius: 15px;
+        border: 2px solid #90CAF9;
+        margin: 15px 0;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
       }
 
       .weather-btn {
-        padding: 8px 16px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background: #f8f9fa;
-        color: #333;
-        font-weight: 500;
+        padding: 10px 20px;
+        border: 2px solid #90CAF9;
+        border-radius: 12px;
+        background: white;
+        color: #1976D2;
+        font-weight: bold;
         cursor: pointer;
-        transition: all 0.2s;
-      }
-
-      .weather-btn.active {
-        background: #1a73e8;
-        color: white;
-        border-color: #1557b0;
+        transition: all 0.3s;
       }
 
       .weather-btn:hover {
-        background: #e9ecef;
-        border-color: #ced4da;
+        background: #BBDEFB;
+        transform: translateY(-2px);
+      }
+
+      .weather-btn.active {
+        background: #2196F3;
+        color: white;
+        border-color: #1976D2;
       }
 
       .time-cycle {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 10px;
-        background: #ffffff;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        gap: 12px;
+        padding: 15px;
+        background: #E3F2FD;
+        border-radius: 15px;
+        border: 2px solid #90CAF9;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
       }
 
       .time-cycle label {
@@ -411,18 +458,21 @@
       }
 
       .map-btn {
-        background-color: #1a73e8;
+        background-color: #2196F3;
         color: white;
         border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
+        padding: 12px 24px;
+        border-radius: 15px;
         cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.3s;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
       }
 
       .map-btn:hover {
-        background-color: #1557b0;
+        background-color: #1976D2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
       }
 
       body.dark-mode .map-btn {
@@ -448,34 +498,34 @@
       .view-controls {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 10px;
-        background: #ffffff;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        gap: 12px;
+        padding: 15px;
+        background: #E3F2FD;
+        border-radius: 15px;
+        border: 2px solid #90CAF9;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
       }
 
       .view-btn {
-        padding: 8px 16px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background: #f8f9fa;
-        color: #333;
-        font-weight: 500;
+        padding: 10px 20px;
+        border: 2px solid #90CAF9;
+        border-radius: 12px;
+        background: white;
+        color: #1976D2;
+        font-weight: bold;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s;
       }
 
       .view-btn:hover {
-        background: #e9ecef;
-        border-color: #ced4da;
+        background: #BBDEFB;
+        transform: translateY(-2px);
       }
 
       .view-btn.active {
-        background: #1a73e8;
+        background: #2196F3;
         color: white;
-        border-color: #1557b0;
+        border-color: #1976D2;
       }
 
       body.dark-mode .view-controls {
@@ -501,6 +551,20 @@
         color: #333;
         font-weight: 500;
         min-width: 100px;
+      }
+
+      label {
+        color: #1976D2;
+        font-weight: 600;
+      }
+
+      .tooltip .tooltiptext {
+        background-color: #2196F3;
+        color: white;
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 14px;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
       }
     </style>
   </head>
@@ -700,8 +764,15 @@
         isDayTime = !isDayTime;
         const btn = document.getElementById('dayNightToggle');
         btn.querySelector('.time-icon').textContent = isDayTime ? '☀️' : '🌙';
+        
+        // 2D harita için gece/gündüz değişimi
         if (mapRenderer) {
           mapRenderer.setDayNightCycle(isDayTime);
+        }
+        
+        // 3D harita için gece/gündüz değişimi
+        if (threeDRenderer) {
+          threeDRenderer.setDayNight(!isDayTime); // true = gece, false = gündüz
         }
       }
 

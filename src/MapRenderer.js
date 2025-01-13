@@ -56,18 +56,18 @@ class MapRenderer {
         switch(mode) {
             case 'height':
                 this.scaleBar.style.background = 'linear-gradient(to bottom, white, black)';
-                this.scaleTitle.textContent = 'Yükseklik';
-                this.updateScaleLabels(['Dağ', 'Ova', 'Deniz']);
+                this.scaleTitle.textContent = 'Height';
+                this.updateScaleLabels(['Mountain', 'Plateau', 'Sea']);
                 break;
             case 'temperature':
                 this.scaleBar.style.background = 'linear-gradient(to bottom, red, blue)';
-                this.scaleTitle.textContent = 'Sıcaklık';
-                this.updateScaleLabels(['Sıcak', 'Ilıman', 'Soğuk']);
+                this.scaleTitle.textContent = 'Temperature';
+                this.updateScaleLabels(['Hot', 'Mild', 'Cold']);
                 break;
             case 'moisture':
                 this.scaleBar.style.background = 'linear-gradient(to bottom, blue, white)';
-                this.scaleTitle.textContent = 'Nem';
-                this.updateScaleLabels(['Islak', 'Nemli', 'Kuru']);
+                this.scaleTitle.textContent = 'Moisture';
+                this.updateScaleLabels(['Wet', 'Moist', 'Dry']);
                 break;
         }
     }

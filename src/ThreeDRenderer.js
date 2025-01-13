@@ -60,19 +60,20 @@ class ThreeDRenderer {
     }
 
     setupLights() {
-        // Ana ambient ışık - güçlendirildi
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
-        this.scene.add(ambientLight);
+        // Ambient light
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        this.scene.add(this.ambientLight);
 
-        // Ana directional ışık - pozisyon ve güç ayarlandı
-        const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
-        mainLight.position.set(20, 40, 20);
-        this.scene.add(mainLight);
+        // Main directional light (sun)
+        this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        this.directionalLight.position.set(50, 50, 50);
+        this.scene.add(this.directionalLight);
 
-        // İkinci directional ışık - dolgu ışığı
-        const fillLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        fillLight.position.set(-30, 40, -30);
-        this.scene.add(fillLight);
+        // Ay ışığı (başlangıçta kapalı)
+        this.moonLight = new THREE.DirectionalLight(0x4444ff, 0.3);
+        this.moonLight.position.set(-50, 30, -50);
+        this.moonLight.visible = false;
+        this.scene.add(this.moonLight);
     }
 
     setupGeometries() {
@@ -106,7 +107,10 @@ class ThreeDRenderer {
             bambooLeaves: new THREE.ConeGeometry(0.2, 0.4, 4),
             sun: new THREE.SphereGeometry(2, 32, 32),
             moon: new THREE.SphereGeometry(1.5, 32, 32),
-            rainDrop: new THREE.ConeGeometry(0.02, 0.1, 4)
+            rainDrop: new THREE.ConeGeometry(0.02, 0.1, 4),
+            torchStick: new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8),
+            torchHead: new THREE.CylinderGeometry(0.08, 0.05, 0.15, 8),
+            flame: new THREE.ConeGeometry(0.08, 0.2, 8)
         };
     }
 
@@ -181,10 +185,11 @@ class ThreeDRenderer {
                 transparent: true,
                 opacity: 0.6
             }),
-            darkCloud: new THREE.MeshBasicMaterial({ 
-                color: 0x424242,
-                transparent: true,
-                opacity: 0.8
+            torch: new THREE.MeshBasicMaterial({ color: 0x8B4513 }),
+            flame: new THREE.MeshBasicMaterial({ 
+                color: 0xFF4500,
+                emissive: 0xFF4500,
+                emissiveIntensity: 1
             })
         };
     }
@@ -358,6 +363,25 @@ class ThreeDRenderer {
         }
 
         tileGroup.position.set(x, 0, z);
+
+        // Ortaçağ teması ve gece vakti için meşale ekle
+        if (tileType.includes('medieval') && this.isNight) {
+            // Meşale sayısını artır ve konumlarını düzenle
+            if (Math.random() < 0.4) {  // Olasılığı artır
+                const torch1 = this.createTorch(
+                    0.3,  // Sabit x konumu
+                    height + 0.2,
+                    0.3   // Sabit z konumu
+                );
+                const torch2 = this.createTorch(
+                    -0.3,  // Sabit x konumu
+                    height + 0.2,
+                    -0.3   // Sabit z konumu
+                );
+                tileGroup.add(torch1, torch2);
+            }
+        }
+
         return tileGroup;
     }
 
@@ -843,28 +867,50 @@ class ThreeDRenderer {
     setDayNight(isNight) {
         this.isNight = isNight;
         
-        // Güneş ve ay görünürlüğü
-        if (this.sun) this.sun.visible = !isNight;
-        if (this.moon) this.moon.visible = isNight;
-        
-        // Işıkları ayarla
-        if (this.dayLight) this.dayLight.visible = !isNight;
-        if (this.nightLight) this.nightLight.visible = isNight;
-        
-        // Ambient ışık yoğunluğunu ayarla
-        if (this.ambientLight) {
-            this.ambientLight.intensity = isNight ? 0.3 : 1.0;
+        // Güneş ve ay görünürlüğünü ayarla
+        if (this.sun) {
+            this.sun.visible = !isNight;
+            this.sun.position.set(isNight ? -50 : 20, isNight ? -10 : 30, isNight ? -50 : -20);
+        }
+        if (this.moon) {
+            this.moon.visible = isNight;
+            this.moon.position.set(isNight ? 20 : 50, isNight ? 30 : -10, isNight ? -20 : 50);
         }
         
+        // Işıklandırmayı ayarla
+        if (this.ambientLight) {
+            this.ambientLight.intensity = isNight ? 0.3 : 0.6;
+        }
+        
+        if (this.dayLight) {
+            this.dayLight.visible = !isNight;
+        }
+        
+        if (this.nightLight) {
+            this.nightLight.visible = isNight;
+        }
+
         // Gökyüzü rengini ayarla
-        const skyColor = isNight ? 
-            (this.weather === 'rainy' ? 0x222222 : 0x001133) : 
-            (this.weather === 'rainy' ? 0x666666 : 0x87CEEB);
-        
-        this.scene.background = new THREE.Color(skyColor);
-        
-        // Materyal renklerini ayarla
+        this.scene.background = new THREE.Color(
+            isNight ? 0x1a1a2e : 0x87CEEB
+        );
+
+        // Gece efekti için sahneye hafif mavi tonlu overlay ekle
+        if (isNight) {
+            const nightOverlay = new THREE.DirectionalLight(0x4444ff, 0.2);
+            nightOverlay.position.set(0, 50, 0);
+            this.scene.add(nightOverlay);
+        }
+
+        // Materyalleri gece/gündüz durumuna göre ayarla
         this.adjustMaterialsForDayNight(isNight);
+
+        // Meşale ışıklarını güncelle
+        this.scene.traverse((object) => {
+            if (object instanceof THREE.PointLight && object.parent.userData.isTorch) {
+                object.visible = isNight;
+            }
+        });
     }
 
     adjustMaterialsForDayNight(isNight) {
@@ -1087,5 +1133,46 @@ class ThreeDRenderer {
             // Karakteri hareket yönüne döndür
             this.character.rotation.y = Math.atan2(-this.moveDirection.x, -this.moveDirection.z);
         }
+    }
+
+    createTorch(x, y, z) {
+        const torchGroup = new THREE.Group();
+        torchGroup.userData.isTorch = true;  // Meşale olduğunu belirt
+        
+        // Meşale gövdesi - daha büyük
+        const stick = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.08, 0.08, 0.6, 8),
+            this.materials.torch
+        );
+        stick.rotation.x = Math.PI / 6;
+        
+        // Meşale başı - daha büyük
+        const head = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.12, 0.08, 0.2, 8),
+            this.materials.torch
+        );
+        head.position.y = 0.3;
+        head.rotation.x = Math.PI / 6;
+        
+        // Alev - daha parlak ve büyük
+        const flame = new THREE.Mesh(
+            new THREE.ConeGeometry(0.12, 0.3, 8),
+            new THREE.MeshBasicMaterial({ 
+                color: 0xFF4500,
+                emissive: 0xFF4500,
+                emissiveIntensity: 2
+            })
+        );
+        flame.position.y = 0.45;
+        flame.rotation.x = Math.PI / 6;
+        
+        // Daha güçlü nokta ışık
+        const light = new THREE.PointLight(0xFF6600, 2, 5);
+        light.position.set(0, 0.45, 0);
+        
+        torchGroup.add(stick, head, flame, light);
+        torchGroup.position.set(x, y, z);
+        
+        return torchGroup;
     }
 } 

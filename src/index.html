@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>2D Harita Oluşturucu</title>
+    <title>Map Generator</title>
     <style>
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -444,137 +444,201 @@
       #mapCanvas.active, #threeDCanvas.active {
         display: block;
       }
+
+      .view-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: #ffffff;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .view-btn {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: #f8f9fa;
+        color: #333;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .view-btn:hover {
+        background: #e9ecef;
+        border-color: #ced4da;
+      }
+
+      .view-btn.active {
+        background: #1a73e8;
+        color: white;
+        border-color: #1557b0;
+      }
+
+      body.dark-mode .view-controls {
+        background-color: #333;
+        border-color: #444;
+      }
+
+      body.dark-mode .view-btn {
+        background-color: #444;
+        border-color: #555;
+        color: #f0f2f5;
+      }
+
+      body.dark-mode .view-btn:hover {
+        background-color: #555;
+      }
+
+      body.dark-mode .view-btn.active {
+        background-color: #1a73e8;
+      }
+
+      .weather-controls label {
+        color: #333;
+        font-weight: 500;
+        min-width: 100px;
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>2D Harita Oluşturucu</h1>
+      <h1>Map Generator</h1>
       <div class="controls">
         <div class="settings-group">
-          <label for="darkModeToggle">Karanlık Mod:</label>
+          <label for="darkModeToggle">Dark Mode:</label>
           <input type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()">
         </div>
 
         <div class="settings-group tooltip">
-          <label for="theme">Harita Teması:</label>
+          <label for="theme">Map Theme:</label>
           <select id="theme">
-            <option value="medieval">Orta Çağ</option>
-            <option value="fantasy">Fantezi</option>
-            <option value="farm">Çiftlik</option>
-            <option value="winter">Kış Diyarı</option>
-            <option value="volcanic">Volkanik</option>
-            <option value="desert">Çöl</option>
-            <option value="swamp">Bataklık</option>
-            <option value="jungle">Orman</option>
+            <option value="medieval">Medieval</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="farm">Farm</option>
+            <option value="winter">Winter</option>
+            <option value="volcanic">Volcanic</option>
+            <option value="desert">Desert</option>
+            <option value="swamp">Swamp</option>
+            <option value="jungle">Jungle</option>
           </select>
-          <span class="tooltiptext">Harita temasını seçin</span>
+          <span class="tooltiptext">Select the map theme</span>
         </div>
 
         <div class="settings-group">
-          <label for="mapSize">Harita Boyutu:</label>
+          <label for="mapSize">Map Size:</label>
           <select id="mapSize">
-            <option value="small">Küçük (30x20)</option>
-            <option value="medium" selected>Orta (50x37)</option>
-            <option value="large">Büyük (80x60)</option>
+            <option value="small">Small (30x20)</option>
+            <option value="medium" selected>Medium (50x37)</option>
+            <option value="large">Large (80x60)</option>
           </select>
         </div>
 
         <div class="settings-group">
-          <label for="tileSize">Kare Boyutu:</label>
+          <label for="tileSize">Tile Size:</label>
           <select id="tileSize">
-            <option value="12">Küçük</option>
-            <option value="16" selected>Orta</option>
-            <option value="24">Büyük</option>
+            <option value="12">Small</option>
+            <option value="16" selected>Medium</option>
+            <option value="24">Large</option>
           </select>
         </div>
 
         <div class="settings-group">
-          <label for="riverCount">Nehir Sayısı:</label>
+          <label for="riverCount">River Count:</label>
           <input type="number" id="riverCount" min="0" max="10" value="3" />
         </div>
 
         <div class="settings-group">
-          <label for="volcanoChance">Volkan Olasılığı:</label>
+          <label for="volcanoChance">Volcano Chance:</label>
           <select id="volcanoChance">
-            <option value="0">Yok</option>
+            <option value="0">None</option>
             <option value="0.3" selected>Normal</option>
-            <option value="0.6">Yüksek</option>
+            <option value="0.6">High</option>
           </select>
         </div>
 
         <div class="settings-group">
-          <label for="viewMode">Görünüm Modu:</label>
+          <label for="viewMode">View Mode:</label>
           <select id="viewMode">
             <option value="normal">Normal</option>
-            <option value="height">Yükseklik Haritası</option>
-            <option value="temperature">Sıcaklık Haritası</option>
-            <option value="moisture">Nem Haritası</option>
+            <option value="height">Height Map</option>
+            <option value="temperature">Temperature Map</option>
+            <option value="moisture">Moisture Map</option>
           </select>
         </div>
 
         <div class="settings-group">
-          <label for="structures">Yapı Yoğunluğu:</label>
+          <label for="structures">Build Density:</label>
           <select id="structures">
-            <option value="low">Az</option>
-            <option value="medium" selected>Orta</option>
-            <option value="high">Çok</option>
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
           </select>
         </div>
 
         <div class="settings-group">
-          <label>Özel Özellikler:</label>
+          <label>Special Features:</label>
           <div class="feature-checkboxes">
             <div class="feature-item">
               <input type="checkbox" id="bridges" name="features" value="bridges">
-              <label for="bridges">Köprüler</label>
+              <label for="bridges">Bridges</label>
             </div>
             <div class="feature-item">
               <input type="checkbox" id="ruins" name="features" value="ruins">
-              <label for="ruins">Harabeler</label>
+              <label for="ruins">Ruins</label>
             </div>
             <div class="feature-item">
               <input type="checkbox" id="caves" name="features" value="caves">
-              <label for="caves">Mağaralar</label>
+              <label for="caves">Caves</label>
             </div>
             <div class="feature-item">
               <input type="checkbox" id="temples" name="features" value="temples">
-              <label for="temples">Tapınaklar</label>
+              <label for="temples">Temples</label>
             </div>
             <div class="feature-item">
               <input type="checkbox" id="towers" name="features" value="towers">
-              <label for="towers">Kuleler</label>
+              <label for="towers">Towers</label>
             </div>
             <div class="feature-item">
               <input type="checkbox" id="villages" name="features" value="villages">
-              <label for="villages">Köyler</label>
+              <label for="villages">Villages</label>
             </div>
           </div>
         </div>
 
         <div class="settings-group">
-          <label for="legendToggle">Harita Lejandı:</label>
+          <label for="legendToggle">Map Legend:</label>
           <input type="checkbox" id="legendToggle" checked>
         </div>
 
         <div class="weather-controls">
-          <label>Hava Durumu:</label>
-          <button class="weather-btn active" data-weather="none">Normal</button>
-          <button class="weather-btn" data-weather="rain">Yağmurlu</button>
-          <button class="weather-btn" data-weather="snow">Karlı</button>
-          <button class="weather-btn" data-weather="cloudy">Bulutlu</button>
+          <label>Weather:</label>
+          <button onclick="threeDRenderer.setWeather('sunny')" class="weather-btn" data-weather="sunny">Sunny</button>
+          <button onclick="threeDRenderer.setWeather('cloudy')" class="weather-btn" data-weather="cloudy">Cloudy</button>
+          <button onclick="threeDRenderer.setWeather('rainy')" class="weather-btn" data-weather="rainy">Rainy</button>
+          <button onclick="threeDRenderer.setWeather('snowy')" class="weather-btn" data-weather="snowy">Snowy</button>
         </div>
 
         <div class="time-cycle">
-          <label>Zaman:</label>
+          <label>Time:</label>
           <button id="dayNightToggle" onclick="toggleDayNight()">
             <span class="time-icon">☀️</span>
           </button>
         </div>
 
+        <div class="view-controls">
+          <button onclick="threeDRenderer.toggleFirstPerson()" class="view-btn" id="fpvToggle">
+            First Person View
+          </button>
+        </div>
+
         <div class="settings-group">
-          <button onclick="generate2DMap()" class="map-btn">2D Harita Oluştur</button>
-          <button onclick="generate3DMap()" class="map-btn">3D Harita Oluştur</button>
-          <button onclick="downloadMap()" class="map-btn">Haritayı İndir</button>
+          <button onclick="generate2DMap()" class="map-btn">2D Map Generate</button>
+          <button onclick="generate3DMap()" class="map-btn">3D Map Generate</button>
+          <button onclick="downloadMap()" class="map-btn">Map Download</button>
         </div>
       </div>
 
@@ -584,29 +648,30 @@
       </div>
 
       <div class="map-details">
-        <h3>Harita Detayları</h3>
+        <h3>Map Details</h3>
         <div id="biomeStats"></div>
         <div id="featureStats"></div>
       </div>
 
       <div class="map-info">
-        <div id="hoverInfo">Kare Bilgisi: -</div>
+        <div id="hoverInfo">Square Info: -</div>
         <br>
-        <div id="mapStats">İstatistikler yükleniyor...</div>
+        <div id="mapStats">Statistics loading...</div>
       </div>
 
       <div class="color-scale">
         <div class="scale-title"></div>
         <div class="scale-bar"></div>
         <div class="scale-labels">
-          <span>Yüksek</span>
-          <span>Orta</span>
-          <span>Düşük</span>
+          <span>High</span>
+          <span>Medium</span>
+          <span>Low</span>
         </div>
       </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="MapGenerator.js"></script>
     <script src="MapRenderer.js"></script>
     <script src="ThreeDRenderer.js"></script>
